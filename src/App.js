@@ -4,6 +4,26 @@ import './App.css'
 
 const jsdiff = require('diff')
 
+
+const questions = [
+  [
+    'every year in april i must pay taxes (impuestos) to the IRS',
+    'cada año en abríl debo impuestos al IRS'
+  ],
+  [
+    'do you want to buy a house in brooklyn?',
+    'quieres comprar una casa en brooklyn'
+  ],
+  [
+    'were you able to explain the plan to her',
+    'puedes explicar el plan a ella'
+  ],
+  [
+    'i needed to call my mom but i couldn\'t',
+    'necesité llamar mi madre pero no pude'
+  ]
+]
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -12,9 +32,18 @@ class App extends Component {
       recognizing: false,
       transcript: '',
       diff: '',
-      answer: 'Esa casa es rojo',
+      questionIndex: 0,
+      answer: '',
+      question: '',
       submitted: false
     }
+  }
+
+  componentWillMount() {
+    this.setState({
+      question: questions[0][0],
+      answer: questions[0][1]
+    })
   }
 
   render() {
@@ -28,6 +57,8 @@ class App extends Component {
           <div className={`button ${this.state.recognizing ? 'active': ''}`}></div>
         </div>
         <button onClick={this._clear}>Clear</button>
+        <button onClick={this._next}>Next</button>
+        <p><strong>{this.state.question}</strong></p>
         <p>Your transcript: { this.state.transcript ? this.state.transcript : '...' }</p>
         { this.state.submitted &&
           <div>
@@ -59,6 +90,16 @@ class App extends Component {
 
   _clear = () => {
     this.setState({ transcript: '', diff: '', submitted: false })
+  }
+
+  _next = () => {
+    this._clear();
+    const newIndex = this.state.questionIndex + 1
+    this.setState({
+      questionIndex: newIndex,
+      answer: questions[newIndex][1],
+      question: questions[newIndex][0],
+    })
   }
 
   _configureRecognition = () => {
@@ -95,7 +136,7 @@ class App extends Component {
       var interim_transcript = ''
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
-          this.setState({ transcript: this.state.transcript += event.results[i][0].transcript })
+          this.setState({ transcript: this.state.transcript + event.results[i][0].transcript })
         } else {
           console.log('not final')
           interim_transcript += event.results[i][0].transcript
