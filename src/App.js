@@ -20,7 +20,7 @@ const questions = [
   ],
   [
     'i needed to call my mom but i couldn\'t',
-    'necesité llamar mi madre pero no pude'
+    'necesité llamar a mi madre pero no pude'
   ]
 ]
 
